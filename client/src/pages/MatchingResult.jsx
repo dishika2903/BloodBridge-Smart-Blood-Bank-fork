@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { requestApi } from '../api/services';
+import { useAuth } from '../context/AuthContext';
 
 export default function MatchingResult() {
   const { requestId } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [statusUpdating, setStatusUpdating] = useState(false);
@@ -63,6 +65,7 @@ export default function MatchingResult() {
 
   const { request, compatibleDonors, availableUnitsByGroup, totalAvailableUnits, sufficient } = data;
   const isPending = request.requestStatus === 'Pending';
+  const isAdmin = user?.role === 'Admin';
 
   return (
     <div className="matching-page">
@@ -92,7 +95,7 @@ export default function MatchingResult() {
               </span>
             </li>
           </ul>
-          {isPending && (
+          {isPending && isAdmin && (
             <div className="status-actions">
               <button
                 type="button"

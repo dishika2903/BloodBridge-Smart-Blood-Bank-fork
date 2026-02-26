@@ -32,3 +32,8 @@ export const requestApi = {
     request(`/requests/status/${id}`, { method: 'PUT', body: JSON.stringify({ requestStatus }) }),
   getMatching: (id) => request(`/requests/match/${id}`),
 };
+
+export const authApi = {
+  signup: (body) => request('/auth/signup', { method: 'POST', body: JSON.stringify(body) }),
+  login: (body) => request('/auth/login', { method: 'POST', body: JSON.stringify(body) }),
+};

@@ -1,8 +1,10 @@
 require('dotenv').config();
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
 const Donor = require('./models/Donor');
 const Inventory = require('./models/Inventory');
 const BloodRequest = require('./models/BloodRequest');
+const User = require('./models/User');
 
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/bloodbridge';
 
@@ -47,6 +49,24 @@ async function seed() {
     await BloodRequest.deleteMany({});
     await BloodRequest.insertMany(seedRequests);
     console.log('Blood requests seeded');
+
+    const adminEmail = (process.env.DEFAULT_ADMIN_EMAIL || 'admin@bloodbridge.com').trim().toLowerCase();
+    const adminPassword = process.env.DEFAULT_ADMIN_PASSWORD || 'admin123';
+    const adminName = process.env.DEFAULT_ADMIN_NAME || 'BloodBridge Admin';
+
+    const existingAdmin = await User.findOne({ email: adminEmail });
+    if (!existingAdmin) {
+      const hashedPassword = await bcrypt.hash(adminPassword, 10);
+      await User.create({
+        name: adminName,
+        email: adminEmail,
+        password: hashedPassword,
+        role: 'Admin',
+      });
+      console.log(`Admin user created with email: ${adminEmail} and password: ${adminPassword}`);
+    } else {
+      console.log(`Admin user already exists with email: ${adminEmail}`);
+    }
 
     console.log('Seed completed successfully');
     process.exit(0);

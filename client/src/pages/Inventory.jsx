@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { inventoryApi } from '../api/services';
+import { useAuth } from '../context/AuthContext';
 
 export default function Inventory() {
   const [inventory, setInventory] = useState([]);
@@ -7,6 +8,9 @@ export default function Inventory() {
   const [editing, setEditing] = useState(null);
   const [value, setValue] = useState(0);
   const [message, setMessage] = useState({ type: '', text: '' });
+  const { user } = useAuth();
+
+  const isAdmin = user?.role === 'Admin';
 
   useEffect(() => {
     loadInventory();
@@ -24,6 +28,7 @@ export default function Inventory() {
   }
 
   const startEdit = (item) => {
+    if (!isAdmin) return;
     setEditing(item.bloodGroup);
     setValue(item.unitsAvailable);
     setMessage({ type: '', text: '' });
@@ -35,7 +40,7 @@ export default function Inventory() {
   };
 
   const saveEdit = async () => {
-    if (editing == null) return;
+    if (editing == null || !isAdmin) return;
     try {
       await inventoryApi.update(editing, value);
       setMessage({ type: 'success', text: 'Inventory updated.' });
@@ -101,32 +106,36 @@ export default function Inventory() {
                       : '–'}
                   </td>
                   <td>
-                    {editing === item.bloodGroup ? (
-                      <>
-                        <button
-                          type="button"
-                          className="btn btn-primary btn-sm"
-                          onClick={saveEdit}
-                        >
-                          Save
-                        </button>
+                    {isAdmin ? (
+                      editing === item.bloodGroup ? (
+                        <>
+                          <button
+                            type="button"
+                            className="btn btn-primary btn-sm"
+                            onClick={saveEdit}
+                          >
+                            Save
+                          </button>
+                          <button
+                            type="button"
+                            className="btn btn-secondary btn-sm"
+                            onClick={cancelEdit}
+                            style={{ marginLeft: '0.5rem' }}
+                          >
+                            Cancel
+                          </button>
+                        </>
+                      ) : (
                         <button
                           type="button"
                           className="btn btn-secondary btn-sm"
-                          onClick={cancelEdit}
-                          style={{ marginLeft: '0.5rem' }}
+                          onClick={() => startEdit(item)}
                         >
-                          Cancel
+                          Update
                         </button>
-                      </>
+                      )
                     ) : (
-                      <button
-                        type="button"
-                        className="btn btn-secondary btn-sm"
-                        onClick={() => startEdit(item)}
-                      >
-                        Update
-                      </button>
+                      <span className="text-muted">View only</span>
                     )}
                   </td>
                 </tr>
@@ -135,6 +144,11 @@ export default function Inventory() {
           </table>
         </div>
       </div>
+      {!isAdmin && (
+        <p className="text-muted" style={{ marginTop: '0.75rem' }}>
+          Only Admin users can update inventory. You can still view current stock levels.
+        </p>
+      )}
     </div>
   );
 }

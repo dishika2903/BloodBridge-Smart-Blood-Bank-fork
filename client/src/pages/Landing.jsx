@@ -1,7 +1,10 @@
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 export default function Landing() {
+  const { user } = useAuth();
+
   useEffect(() => {
     const handleScroll = () => {
       document.querySelectorAll('.reveal').forEach((el) => {
@@ -21,7 +24,11 @@ export default function Landing() {
         <div className="landing-nav-links">
           <a href="#about">About</a>
           <a href="#features">Features</a>
-          <Link to="/app" className="btn btn-primary">Go to Dashboard</Link>
+          {user ? (
+            <Link to="/app" className="btn btn-primary">Go to Dashboard</Link>
+          ) : (
+            <Link to="/login" className="btn btn-primary">Login to Dashboard</Link>
+          )}
         </div>
       </nav>
 
@@ -40,8 +47,17 @@ export default function Landing() {
             connect efficiently so the right blood reaches those who need it.
           </p>
           <div className="hero-cta">
-            <Link to="/app/donors" className="btn btn-primary">Register as Donor</Link>
-            <Link to="/app/request" className="btn btn-secondary">Request Blood</Link>
+            {user ? (
+              <>
+                <Link to="/app/donors" className="btn btn-primary">Register as Donor</Link>
+                <Link to="/app/request" className="btn btn-secondary">Request Blood</Link>
+              </>
+            ) : (
+              <>
+                <Link to="/signup" className="btn btn-primary">Get Started</Link>
+                <Link to="/login" className="btn btn-secondary">Login</Link>
+              </>
+            )}
           </div>
         </div>
         <div className="scroll-hint animate-float">

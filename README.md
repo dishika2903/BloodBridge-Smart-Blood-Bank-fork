@@ -160,17 +160,21 @@ in `client/.env` so requests go to the correct API base.
 | GET    | `/api/requests`                   | List requests              |
 | PUT    | `/api/requests/status/:id`        | Set status (Approved/Rejected) |
 | GET    | `/api/requests/match/:id`         | Matching result for request |
+| POST   | `/api/auth/signup`                | Signup (create user)       |
+| POST   | `/api/auth/login`                 | Login (email + password)   |
 
 ---
 
 ## Pages
 
 1. **Landing** (`/`) – Hero, tagline, about, features, CTA to dashboard.
-2. **Dashboard** (`/app`) – Total donors, total units, pending requests; recent requests with link to match.
-3. **Donor Registration** (`/app/donors`) – Form → POST `/api/donors`.
-4. **Inventory** (`/app/inventory`) – Table of blood groups and units; inline edit → PUT.
-5. **Blood Request** (`/app/request`) – Form → POST `/api/requests`; redirects to match page.
-6. **Matching Result** (`/app/match/:requestId`) – Request details, compatible units, eligible donors; Approve/Reject → PUT status (approve deducts inventory).
+2. **Login** (`/login`) – Email + password login, in-memory React auth state (no JWT/sessions/cookies).
+3. **Signup** (`/signup`) – Create Admin/Staff users; on success redirects to login.
+4. **Dashboard** (`/app`) – Total donors, total units, pending requests; recent requests with link to match. Protected route (requires login).
+5. **Donor Registration** (`/app/donors`) – Form → POST `/api/donors`. Protected route; accessible to Admin and Staff.
+6. **Inventory** (`/app/inventory`) – Table of blood groups and units; inline edit → PUT. Protected route; only Admin can update units (Staff is view-only).
+7. **Blood Request** (`/app/request`) – Form → POST `/api/requests`; redirects to match page. Protected route; accessible to Admin and Staff.
+8. **Matching Result** (`/app/match/:requestId`) – Request details, compatible units, eligible donors; Approve/Reject → PUT status (approve deducts inventory). Protected route; only Admin sees approve/reject controls.
 
 ---
 
@@ -192,7 +196,31 @@ See `server/.env.example` or create `server/.env`:
 PORT=5000
 NODE_ENV=development
 MONGO_URI=mongodb://localhost:27017/bloodbridge
+
+# Optional default admin used by npm run seed
+DEFAULT_ADMIN_NAME=BloodBridge Admin
+DEFAULT_ADMIN_EMAIL=admin@bloodbridge.com
+DEFAULT_ADMIN_PASSWORD=admin123
 ```
+
+---
+
+## Creating the First Admin User
+
+- **Using seed script (recommended for local dev):**
+  1. Ensure MongoDB is running and `server/.env` is configured.
+  2. Optionally edit `DEFAULT_ADMIN_*` values in `server/.env`.
+  3. Run:
+     ```bash
+     cd server
+     npm install
+     npm run seed
+     ```
+  4. Log in at `/login` using the seeded admin email and password.
+
+- **Using UI:**
+  1. Start backend and frontend (`npm run dev` in `server` and `client`).
+  2. Visit `/signup`, create an **Admin** user, then log in at `/login`.
 
 ---
 
