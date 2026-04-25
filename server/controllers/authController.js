@@ -52,6 +52,12 @@ exports.login = async (req, res, next) => {
 
     const token = generateToken(user._id, user.role);
 
+    req.session.user = {
+      id: user._id,
+      role: user.role,
+      email: user.email
+   };
+
     return res.json({
       success: true,
       token,

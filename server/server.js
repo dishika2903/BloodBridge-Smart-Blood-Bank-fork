@@ -17,6 +17,8 @@ connectDB();
 
 const app = express();
 const server = http.createServer(app);
+app.set('view engine', 'ejs');
+
 const io = socketIo(server, {
   cors: {
     origin: '*',
@@ -37,6 +39,18 @@ const PORT = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(express.json());
+
+const session = require('express-session');
+
+app.use(session({
+  secret: 'bloodbridge-secret',
+  resave: false,
+  saveUninitialized: true,
+  cookie: {
+    maxAge: 1000 * 60 * 60 // 1 hour
+  }
+}));
+
 app.use(express.urlencoded({ extended: true }));
 app.use(logger);
 
@@ -45,10 +59,27 @@ app.use('/api/donors', donorRoutes);
 app.use('/api/inventory', inventoryRoutes);
 app.use('/api/requests', requestRoutes);
 
+app.get('/session-check', (req, res) => {
+  if (req.session.user) {
+    res.json({
+      loggedIn: true,
+      user: req.session.user
+    });
+  } else {
+    res.json({
+      loggedIn: false
+    });
+  }
+});
+
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.get('/api/health', (req, res) => {
   res.json({ success: true, message: 'BloodBridge API is running' });
+});
+
+app.get('/', (req, res) => {
+  res.render('home', { message: 'EJS is working!' });
 });
 
 app.use(errorHandler);

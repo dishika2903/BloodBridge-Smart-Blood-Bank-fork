@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "ejs": "^5.0.2",
+    "express-session": "^1.19.0"
+  }
+}
