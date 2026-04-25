@@ -25,6 +25,13 @@ const updateInventoryByBloodGroup = async (req, res, next) => {
       { unitsAvailable, lastUpdated: new Date() },
       { new: true, upsert: true }
     );
+    
+    // Emit socket event
+    const io = req.app.get('io');
+    if (io) {
+      io.emit('inventory_update', inv);
+    }
+
     res.status(200).json({ success: true, data: inv });
   } catch (err) {
     next(err);

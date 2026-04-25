@@ -2,14 +2,28 @@ const API_BASE = import.meta.env.VITE_API_URL || '/api';
 
 async function request(endpoint, options = {}) {
   const url = `${API_BASE}${endpoint}`;
+
+  const token = localStorage.getItem("token");
+
   const res = await fetch(url, {
     ...options,
-    headers: { 'Content-Type': 'application/json', ...options.headers },
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token && { Authorization: `Bearer ${token}` }),
+      ...options.headers,
+    },
   });
+
   const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.message || res.statusText || 'Request failed');
+
+  if (!res.ok) {
+    throw new Error(data.message || 'Request failed');
+  }
+
   return data;
 }
+
+// ================= APIs =================
 
 export const donorApi = {
   create: (body) => request('/donors', { method: 'POST', body: JSON.stringify(body) }),
@@ -22,14 +36,20 @@ export const donorApi = {
 export const inventoryApi = {
   getAll: () => request('/inventory'),
   update: (bloodGroup, unitsAvailable) =>
-    request(`/inventory/update/${bloodGroup}`, { method: 'PUT', body: JSON.stringify({ unitsAvailable }) }),
+    request(`/inventory/update/${bloodGroup}`, {
+      method: 'PUT',
+      body: JSON.stringify({ unitsAvailable }),
+    }),
 };
 
 export const requestApi = {
   create: (body) => request('/requests', { method: 'POST', body: JSON.stringify(body) }),
   getAll: () => request('/requests'),
   updateStatus: (id, requestStatus) =>
-    request(`/requests/status/${id}`, { method: 'PUT', body: JSON.stringify({ requestStatus }) }),
+    request(`/requests/status/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify({ requestStatus }),
+    }),
   getMatching: (id) => request(`/requests/match/${id}`),
 };
 

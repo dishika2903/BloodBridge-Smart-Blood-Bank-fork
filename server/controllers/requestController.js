@@ -7,6 +7,13 @@ const { getEligibleDonorsForGroup } = require('../middleware/checkDonorEligibili
 const createRequest = async (req, res, next) => {
   try {
     const request = await BloodRequest.create(req.body);
+    
+    // Emit socket event
+    const io = req.app.get('io');
+    if (io) {
+      io.emit('new_request', request);
+    }
+
     res.status(201).json({ success: true, data: request });
   } catch (err) {
     next(err);

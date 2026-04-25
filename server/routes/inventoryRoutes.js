@@ -5,8 +5,10 @@ const {
   updateInventoryByBloodGroup,
 } = require('../controllers/inventoryController');
 const { validateInventoryUpdate } = require('../middleware/validateRequest');
+const { protect } = require('../middleware/authMiddleware');
+const { authorizeRoles } = require('../middleware/roleMiddleware');
 
-router.get('/', getInventory);
-router.put('/update/:bloodGroup', validateInventoryUpdate, updateInventoryByBloodGroup);
+router.get('/', protect, getInventory);
+router.put('/update/:bloodGroup', protect, authorizeRoles('Admin'), validateInventoryUpdate, updateInventoryByBloodGroup);
 
 module.exports = router;

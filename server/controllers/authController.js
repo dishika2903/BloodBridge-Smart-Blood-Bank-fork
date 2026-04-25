@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt');
 const User = require('../models/User');
+const generateToken = require('../utils/generateToken');
 
 const toUserResponse = (user) => ({
   id: user._id,
@@ -22,9 +23,12 @@ exports.signup = async (req, res, next) => {
       role: role || 'Staff',
     });
 
+    const token = generateToken(user._id, user.role);
+
     return res.status(201).json({
       success: true,
       message: 'User registered successfully',
+      token,
       user: toUserResponse(user),
     });
   } catch (err) {
@@ -46,8 +50,11 @@ exports.login = async (req, res, next) => {
       return res.status(400).json({ success: false, message: 'Invalid email or password' });
     }
 
+    const token = generateToken(user._id, user.role);
+
     return res.json({
       success: true,
+      token,
       user: toUserResponse(user),
     });
   } catch (err) {

@@ -558,8 +558,28 @@ tr:hover td {
 }
 
 /* Form page */
+
+.form-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
 .form-page .form-card {
   max-width: 480px;
+  width: 100%;
+}
+
+.form-card form {
+  width: 100%;
 }
 
 .form-message {

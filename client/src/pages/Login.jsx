@@ -18,24 +18,32 @@ export default function Login() {
     setMessage({ type: '', text: '' });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setMessage({ type: '', text: '' });
-    try {
-      const res = await authApi.login(form);
-      if (res && res.success && res.user) {
-        login(res.user);
-        navigate(from, { replace: true });
-      } else {
-        setMessage({ type: 'error', text: res.message || 'Login failed' });
-      }
-    } catch (err) {
-      setMessage({ type: 'error', text: err.message || 'Login failed' });
-    } finally {
-      setLoading(false);
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setLoading(true);
+  setMessage({ type: '', text: '' });
+
+  try {
+    const res = await authApi.login(form);
+
+    console.log("Login Response:", res); // 👈 DEBUG (remove later)
+
+    if (res && res.success && res.user && res.token) {
+      // ✅ SAFE TOKEN STORAGE
+      localStorage.setItem("token", res.token);
+
+      login(res.user);
+      navigate(from, { replace: true });
+    } else {
+      setMessage({ type: 'error', text: res.message || 'Login failed' });
     }
-  };
+
+  } catch (err) {
+    setMessage({ type: 'error', text: err.message || 'Login failed' });
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="auth-page">

@@ -2,6 +2,8 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const http = require('http');
+const socketIo = require('socket.io');
 const connectDB = require('./config/db');
 const logger = require('./middleware/logger');
 const authRoutes = require('./routes/authRoutes');
@@ -14,6 +16,23 @@ const requestRoutes = require('./routes/requestRoutes');
 connectDB();
 
 const app = express();
+const server = http.createServer(app);
+const io = socketIo(server, {
+  cors: {
+    origin: '*',
+  },
+});
+
+app.set('io', io);
+
+io.on('connection', (socket) => {
+  console.log(`New client connected: ${socket.id}`);
+  
+  socket.on('disconnect', () => {
+    console.log(`Client disconnected: ${socket.id}`);
+  });
+});
+
 const PORT = process.env.PORT || 5000;
 
 app.use(cors());
@@ -34,6 +53,6 @@ app.get('/api/health', (req, res) => {
 
 app.use(errorHandler);
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`BloodBridge server running on port ${PORT}`);
 });
