@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { donorApi, inventoryApi, requestApi } from '../api/services';
+import { io } from "socket.io-client";
 
 export default function Dashboard() {
   const [stats, setStats] = useState({
@@ -10,6 +11,9 @@ export default function Dashboard() {
   });
   const [loading, setLoading] = useState(true);
   const [requests, setRequests] = useState([]);
+
+  // ✅ Socket created once
+  const socket = io("http://localhost:5000");
 
   useEffect(() => {
     let mounted = true;
@@ -38,6 +42,26 @@ export default function Dashboard() {
     }
     fetchStats();
     return () => { mounted = false; };
+  }, []);
+
+  // ✅ Socket listener
+  useEffect(() => {
+    socket.on("new_request", (data) => {
+      console.log("New request received:", data);
+
+      // update UI instantly
+      setRequests((prev) => [data, ...prev.slice(0, 4)]);
+
+      // update stats
+      setStats((prev) => ({
+        ...prev,
+        pendingRequests: prev.pendingRequests + 1,
+      }));
+    });
+
+    return () => {
+      socket.off("new_request"); // cleanup listener
+    };
   }, []);
 
   if (loading) {
