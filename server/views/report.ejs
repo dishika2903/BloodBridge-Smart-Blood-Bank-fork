@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="/styles.css">
+  <title>BloodBridge Report</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial;
+      background: #0f172a;
+      color: white;
+      padding: 20px;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      backdrop-filter: blur(10px);
+      padding: 20px;
+      margin-bottom: 15px;
+      border-radius: 15px;
+    }
+
+    .value {
+      font-size: 28px;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+
+    .back-btn {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 10px 15px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 10px;
+      text-decoration: none;
+      color: white;
+      transition: 0.3s;
+    }
+
+    .back-btn:hover {
+      background: rgba(255,255,255,0.2);
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>📊 BloodBridge Report (SSR)</h1>
+
+  <div class="card">
+    <h2>Total Donors</h2>
+    <div class="value"><%= totalDonors %></div>
+  </div>
+
+  <div class="card">
+    <h2>Total Blood Units</h2>
+    <div class="value"><%= totalUnits %></div>
+  </div>
+
+  <div class="card">
+    <h2>Pending Requests</h2>
+    <div class="value"><%= pendingRequests %></div>
+  </div>
+
+  <button 
+  onclick="window.location.replace('http://localhost:3000/app')" 
+  class="glass-btn"
+>
+  Back to Dashboard
+</button>
+   
+</div>
+
+</body>
+</html>

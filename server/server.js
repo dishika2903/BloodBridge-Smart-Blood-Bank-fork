@@ -18,6 +18,7 @@ connectDB();
 const app = express();
 const server = http.createServer(app);
 app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
 
 const io = socketIo(server, {
   cors: {
@@ -40,6 +41,8 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
+
+
 const session = require('express-session');
 
 app.use(session({
@@ -58,6 +61,31 @@ app.use('/api/auth', authRoutes);
 app.use('/api/donors', donorRoutes);
 app.use('/api/inventory', inventoryRoutes);
 app.use('/api/requests', requestRoutes);
+
+// ✅ SSR REPORT ROUTE (add here)
+app.get('/report', async (req, res) => {
+  try {
+    const Donor = require('./models/Donor');
+    const Inventory = require('./models/Inventory');
+    const BloodRequest = require('./models/BloodRequest');
+
+    const donors = await Donor.find();
+    const inventory = await Inventory.find();
+    const requests = await BloodRequest.find();
+
+    const totalUnits = inventory.reduce((sum, i) => sum + (i.unitsAvailable || 0), 0);
+    const pending = requests.filter(r => r.requestStatus === 'Pending');
+
+    res.render('report', {
+      totalDonors: donors.length,
+      totalUnits,
+      pendingRequests: pending.length
+    });
+
+  } catch (err) {
+    res.send("Error loading report");
+  }
+});
 
 app.get('/session-check', (req, res) => {
   if (req.session.user) {
@@ -78,9 +106,7 @@ app.get('/api/health', (req, res) => {
   res.json({ success: true, message: 'BloodBridge API is running' });
 });
 
-app.get('/', (req, res) => {
-  res.render('home', { message: 'EJS is working!' });
-});
+
 
 app.use(errorHandler);
 

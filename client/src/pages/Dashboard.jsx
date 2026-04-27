@@ -60,7 +60,7 @@ export default function Dashboard() {
     });
 
     return () => {
-      socket.off("new_request"); // cleanup listener
+      socket.off("new_request");
     };
   }, []);
 
@@ -78,6 +78,8 @@ export default function Dashboard() {
       <div className="page-header animate-fade-in">
         <h1>Dashboard</h1>
         <p>Overview of your blood bank</p>
+
+       
       </div>
 
       <div className="stats-grid">
@@ -100,9 +102,15 @@ export default function Dashboard() {
 
       <div className="glass-card recent-section animate-slide-up" style={{ animationDelay: '0.4s' }}>
         <div className="section-header">
-          <h2>Recent Requests</h2>
-          <Link to="/app/request" className="btn btn-secondary btn-sm">New Request</Link>
-        </div>
+  <h2>Recent Requests</h2>
+
+
+
+  {/* EXISTING BUTTON */}
+  <Link to="/app/request" className="btn btn-secondary btn-sm">
+    New Request
+  </Link>
+</div>
         {requests.length === 0 ? (
           <p className="text-muted">No requests yet. <Link to="/app/request">Create one</Link>.</p>
         ) : (
