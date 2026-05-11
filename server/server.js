@@ -61,6 +61,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/donors', donorRoutes);
 app.use('/api/inventory', inventoryRoutes);
 app.use('/api/requests', requestRoutes);
+app.use('/api/feedback', require('./routes/feedbackRoutes'));
 
 // ✅ SSR REPORT ROUTE (add here)
 app.get('/report', async (req, res) => {
@@ -110,6 +111,10 @@ app.get('/api/health', (req, res) => {
 
 app.use(errorHandler);
 
-server.listen(PORT, () => {
-  console.log(`BloodBridge server running on port ${PORT}`);
-});
+if (process.env.NODE_ENV !== 'test') {
+  server.listen(PORT, () => {
+    console.log(`BloodBridge server running on port ${PORT}`);
+  });
+}
+
+module.exports = { app, server };

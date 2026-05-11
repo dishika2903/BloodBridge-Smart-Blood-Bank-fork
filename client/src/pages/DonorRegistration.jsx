@@ -11,6 +11,7 @@ export default function DonorRegistration() {
     city: '',
     lastDonationDate: '',
   });
+  const [imageFile, setImageFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
 
@@ -19,17 +20,34 @@ export default function DonorRegistration() {
     setMessage({ type: '', text: '' });
   };
 
+  const handleFileChange = (e) => {
+    setImageFile(e.target.files[0]);
+    setMessage({ type: '', text: '' });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setMessage({ type: '', text: '' });
     try {
-      await donorApi.create({
-        ...form,
-        lastDonationDate: form.lastDonationDate || undefined,
-      });
+      let submitData;
+      if (imageFile) {
+        submitData = new FormData();
+        Object.keys(form).forEach(key => submitData.append(key, form[key]));
+        if (!form.lastDonationDate) submitData.delete('lastDonationDate');
+        submitData.append('image', imageFile);
+      } else {
+        submitData = {
+          ...form,
+          lastDonationDate: form.lastDonationDate || undefined,
+        };
+      }
+
+      await donorApi.create(submitData);
       setMessage({ type: 'success', text: 'Donor registered successfully!' });
       setForm({ name: '', bloodGroup: '', phone: '', city: '', lastDonationDate: '' });
+      setImageFile(null);
+      e.target.reset();
     } catch (err) {
       setMessage({ type: 'error', text: err.message || 'Registration failed.' });
     } finally {
@@ -101,6 +119,15 @@ export default function DonorRegistration() {
               value={form.lastDonationDate}
               onChange={handleChange}
               required
+            />
+          </div>
+          <div className="form-group">
+            <label>Donor Image (Optional)</label>
+            <input
+              type="file"
+              name="image"
+              accept="image/*"
+              onChange={handleFileChange}
             />
           </div>
           {message.text && (

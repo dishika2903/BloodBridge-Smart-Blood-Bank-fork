@@ -30,6 +30,10 @@ const donorSchema = new mongoose.Schema({
     enum: ['Available', 'Not Available'],
     default: 'Not Available',
   },
+  image: {
+    type: String,
+    default: '',
+  },
 }, { timestamps: true });
 
 // Middleware: auto-calculate availability (eligible if last donation > 3 months ago)

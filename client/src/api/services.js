@@ -5,13 +5,20 @@ async function request(endpoint, options = {}) {
 
   const token = localStorage.getItem("token");
 
+  const isFormData = options.body instanceof FormData;
+
+  const headers = {
+    ...(token && { Authorization: `Bearer ${token}` }),
+    ...options.headers,
+  };
+
+  if (!isFormData) {
+    headers['Content-Type'] = 'application/json';
+  }
+
   const res = await fetch(url, {
     ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...(token && { Authorization: `Bearer ${token}` }),
-      ...options.headers,
-    },
+    headers,
   });
 
   const data = await res.json().catch(() => ({}));
@@ -26,7 +33,7 @@ async function request(endpoint, options = {}) {
 // ================= APIs =================
 
 export const donorApi = {
-  create: (body) => request('/donors', { method: 'POST', body: JSON.stringify(body) }),
+  create: (body) => request('/donors', { method: 'POST', body: body instanceof FormData ? body : JSON.stringify(body) }),
   getAll: () => request('/donors'),
   getById: (id) => request(`/donors/${id}`),
   update: (id, body) => request(`/donors/${id}`, { method: 'PUT', body: JSON.stringify(body) }),

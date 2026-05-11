@@ -10,8 +10,9 @@ const {
 const { validateDonor } = require('../middleware/validateRequest');
 const { protect } = require('../middleware/authMiddleware');
 const { authorizeRoles } = require('../middleware/roleMiddleware');
+const upload = require('../middleware/upload');
 
-router.post('/', protect, validateDonor, createDonor);
+router.post('/', protect, upload.single('image'), validateDonor, createDonor);
 router.get('/', protect, getDonors);
 router.get('/:id', protect, getDonorById);
 router.put('/:id', protect, authorizeRoles('Admin'), updateDonor);

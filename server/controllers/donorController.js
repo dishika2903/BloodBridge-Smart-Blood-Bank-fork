@@ -2,7 +2,11 @@ const Donor = require('../models/Donor');
 
 const createDonor = async (req, res, next) => {
   try {
-    const donor = await Donor.create(req.body);
+    const donorData = { ...req.body };
+    if (req.file) {
+      donorData.image = `/uploads/${req.file.filename}`;
+    }
+    const donor = await Donor.create(donorData);
     res.status(201).json({ success: true, data: donor });
   } catch (err) {
     next(err);

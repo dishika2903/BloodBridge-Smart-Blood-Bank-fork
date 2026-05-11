@@ -16,7 +16,9 @@ BloodBridge is a full-stack web application designed to manage blood donors, inv
 - ⚙️ Backend built with Node.js & Express
 - 🗄️ MongoDB Database Integration
 - 📄 EJS Template Rendering (for demo)
-- 🧪 API Testing using Postman
+- 🧪 API Testing using Jest & Supertest
+- 📁 File Uploads with Multer
+- 🗄️ Prisma & PostgreSQL Demo Feature
 
 ---
 

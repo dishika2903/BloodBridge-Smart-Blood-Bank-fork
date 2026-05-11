@@ -158,6 +158,7 @@ export default function MatchingResult() {
               <table>
                 <thead>
                   <tr>
+                    <th>Image</th>
                     <th>Name</th>
                     <th>Blood Group</th>
                     <th>Phone</th>
@@ -167,6 +168,15 @@ export default function MatchingResult() {
                 <tbody>
                   {compatibleDonors.map((d) => (
                     <tr key={d._id}>
+                      <td>
+                        {d.image ? (
+                          <img src={`http://localhost:5000${d.image}`} alt={d.name} style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }} />
+                        ) : (
+                          <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: '#ddd', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <span style={{ fontSize: '20px', color: '#555' }}>👤</span>
+                          </div>
+                        )}
+                      </td>
                       <td>{d.name}</td>
                       <td>{d.bloodGroup}</td>
                       <td>{d.phone}</td>
