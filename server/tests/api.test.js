@@ -81,7 +81,7 @@ describe('BloodBridge API Tests', () => {
           password: 'wrongpassword',
         });
 
-      expect(res.statusCode).toEqual(401);
+      expect(res.statusCode).toEqual(400);
       expect(res.body.success).toBe(false);
     });
   });

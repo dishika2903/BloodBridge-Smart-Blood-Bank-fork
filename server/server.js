@@ -61,7 +61,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/donors', donorRoutes);
 app.use('/api/inventory', inventoryRoutes);
 app.use('/api/requests', requestRoutes);
-app.use('/api/feedback', require('./routes/feedbackRoutes'));
+// app.use('/api/feedback', require('./routes/feedbackRoutes'));
 
 // ✅ SSR REPORT ROUTE (add here)
 app.get('/report', async (req, res) => {
