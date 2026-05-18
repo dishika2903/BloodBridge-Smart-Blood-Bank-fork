@@ -42,7 +42,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:3000",
-      "https://blood-bridge-smart-blood-bank.vercel.app"
+      "https://blood-bridge-smart-blood-git-e75eec-dishikas-projects-9aaad1d2.vercel.app"
     ],
     credentials: true,
   })
