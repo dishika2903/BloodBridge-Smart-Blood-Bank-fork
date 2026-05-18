@@ -38,7 +38,15 @@ io.on('connection', (socket) => {
 
 const PORT = process.env.PORT || 5000;
 
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      "http://localhost:3000",
+      "https://blood-bridge-smart-blood-bank.vercel.app"
+    ],
+    credentials: true,
+  })
+);
 app.use(express.json());
 
 
