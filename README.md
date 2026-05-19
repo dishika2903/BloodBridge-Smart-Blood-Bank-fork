@@ -228,6 +228,15 @@ npm test
 
 ---
 
+## 🌐 Live Deployment
+
+Frontend:
+https://blood-bridge-smart-blood-git-e75eec-dishikas-projects-9aaad1d2.vercel.app
+
+Backend API:
+https://bloodbridge-backend-3mqw.onrender.com
+
+---
 # 📌 Conclusion
 
 BloodBridge provides an efficient, secure, and real-time solution for managing blood bank operations using modern full-stack web technologies.
